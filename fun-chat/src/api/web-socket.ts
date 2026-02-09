@@ -1,0 +1,95 @@
+import { Mediator } from '@/core/mediator';
+import { type Message } from './types';
+export class WebSocketService {
+  private static instance: WebSocketService;
+  private socket!: WebSocket;
+  private mediator = Mediator.getInstance();
+
+  private constructor() {}
+
+  getSocket(): WebSocket {
+    return this.socket;
+  }
+  static getInstance(): WebSocketService {
+    if (!this.instance) {
+      this.instance = new WebSocketService();
+    }
+    return this.instance;
+  }
+
+  connect(url: string) {
+    this.socket = new WebSocket(url);
+
+    this.socket.addEventListener('open', () => {
+      this.mediator.notify('WS:OPEN');
+    });
+
+    this.socket.addEventListener('message', (event) => {
+      const data: Message = JSON.parse(event.data);
+      console.log('Message from server', data);
+      switch (data.type) {
+        case 'USER_LOGIN': {
+          this.mediator.notify('WS:LOGIN', data);
+          break;
+        }
+        case 'USER_ACTIVE': {
+          this.mediator.notify('WS:USER_ACTIVE', data);
+          break;
+        }
+        case 'ERROR': {
+          this.mediator.notify('WS:ERROR', data);
+          break;
+        }
+        case 'USER_LOGOUT': {
+          this.mediator.notify('WS:LOGOUT', data);
+          break;
+        }
+        case 'USER_EXTERNAL_LOGIN': {
+          this.mediator.notify('WS:USER_EXTERNAL_LOGIN', data);
+          break;
+        }
+        case 'USER_EXTERNAL_LOGOUT': {
+          this.mediator.notify('WS:USER_EXTERNAL_LOGOUT', data);
+          break;
+        }
+      }
+    });
+    this.socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      switch (data.type) {
+        case 'MSG_SEND': {
+          this.mediator.notify('WS:MSG_SEND', data);
+          break;
+        }
+        case 'MSG_FROM_USER': {
+          this.mediator.notify('WS:MSG_FROM_USER', data);
+          break;
+        }
+        case 'MSG_COUNT_NOT_READED_FROM_USER': {
+          this.mediator.notify('WS:MSG_COUNT_NOT_READED_FROM_USER', data);
+          break;
+        }
+        case 'MSG_DELIVER': {
+          this.mediator.notify('WS:MSG_DELIVER', data);
+          break;
+        }
+        case 'MSG_READ': {
+          this.mediator.notify('WS:MSG_READ', data);
+          break;
+        }
+        case 'MSG_DELETE': {
+          this.mediator.notify('WS:MSG_DELETE', data);
+          break;
+        }
+        case 'MSG_EDIT': {
+          this.mediator.notify('WS:MSG_EDIT', data);
+          break;
+        }
+      }
+    });
+  }
+  send(data: Message) {
+    console.log('Send:', data);
+    this.socket.send(JSON.stringify(data));
+  }
+}

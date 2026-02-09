@@ -1,0 +1,41 @@
+.dialog-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 500px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dialog-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.565);
+}
+
+.msg-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #fff;
+  border-radius: 5px;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.565);
+}
+
+input.msg-input {
+  width: 80%;
+  padding: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.565);
+}

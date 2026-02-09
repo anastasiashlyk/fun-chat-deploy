@@ -1,0 +1,55 @@
+.chat-page {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  max-width: 1200px;
+  margin: auto;
+  gap: 10px;
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  width: 40%;
+}
+
+.user-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.user-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.user-item::before {
+  display: inline-block;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgb(226, 48, 3);
+  margin-right: 10px;
+}
+
+.user-item.active::before {
+  background-color: rgb(3, 214, 3);
+}
+
+.user-item:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
