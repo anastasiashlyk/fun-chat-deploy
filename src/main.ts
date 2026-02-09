@@ -1,5 +1,5 @@
 import './style.css';
-import { App } from './core/app/index.ts';
+import { App } from './core/app/index';
 
 const app = new App();
 app.init();
