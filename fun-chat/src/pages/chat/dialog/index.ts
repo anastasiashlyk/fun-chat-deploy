@@ -1,4 +1,5 @@
 import { Element } from '@/components/element';
+
 import { DialogHeader } from './dialog-header';
 import { MessagesBox } from './messages';
 import { DialogForm } from './msg-form';
@@ -6,6 +7,7 @@ import './styles.css';
 
 export class Dialog {
   private html: Element;
+
 
   constructor() {
     this.html = this.createView();
