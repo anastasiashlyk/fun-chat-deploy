@@ -26,7 +26,7 @@ export class WebSocketService {
 
     this.socket.addEventListener('message', (event) => {
       const data: Message = JSON.parse(event.data);
-      console.log('Message from server', data);
+
       switch (data.type) {
         case 'USER_LOGIN': {
           this.mediator.notify('WS:LOGIN', data);
@@ -34,6 +34,10 @@ export class WebSocketService {
         }
         case 'USER_ACTIVE': {
           this.mediator.notify('WS:USER_ACTIVE', data);
+          break;
+        }
+        case 'USER_INACTIVE': {
+          this.mediator.notify('WS:USER_INACTIVE', data);
           break;
         }
         case 'ERROR': {
@@ -50,6 +54,10 @@ export class WebSocketService {
         }
         case 'USER_EXTERNAL_LOGOUT': {
           this.mediator.notify('WS:USER_EXTERNAL_LOGOUT', data);
+          break;
+        }
+        case 'MSG_COUNT_NOT_READED_FROM_USER': {
+          this.mediator.notify('WS:MSG_COUNT_NOT_READED_FROM_USER', data);
           break;
         }
       }
@@ -89,7 +97,6 @@ export class WebSocketService {
     });
   }
   send(data: Message) {
-    console.log('Send:', data);
     this.socket.send(JSON.stringify(data));
   }
 }

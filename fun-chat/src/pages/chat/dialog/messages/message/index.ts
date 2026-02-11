@@ -1,8 +1,9 @@
 import { TextElement } from '@/components/text-element';
 import { Element } from '@/components/element';
 import { type Message_ } from '@/api/types';
+import './styles.css';
 
-export class Message {
+export class MessageElement {
   private html: Element;
   private text: TextElement;
   private date: TextElement;
@@ -20,11 +21,15 @@ export class Message {
       className: 'message-text',
     });
     this.date = new TextElement({
-      text: time.toString(),
+      text: new Date(time).toLocaleString(),
       className: 'message-date',
     });
     this.status = new TextElement({
-      text: message.status?.isDelivered ? '✓' : '',
+      text: message.status?.isReaded
+        ? 'Readed'
+        : message.status?.isDelivered
+          ? 'Delivered'
+          : 'Not delivered',
       className: 'message-status',
     });
     this.sender = new TextElement({
@@ -51,5 +56,14 @@ export class Message {
 
   getHtml(): Element {
     return this.html;
+  }
+
+  updateStatus(status: string) {
+    this.status.setText(status);
+  }
+
+  hideStatus() {
+    this.status.setText('.');
+    this.status.getElement().style.opacity = '0';
   }
 }

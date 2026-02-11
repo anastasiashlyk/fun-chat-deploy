@@ -3,6 +3,7 @@ import { TextElement } from '@/components/text-element';
 import { Button } from '@/components/button';
 import { logout } from '@/services/auth-service';
 import { Mediator } from '@/core/mediator';
+import { Modal } from '@/components/modal';
 
 import { type Message } from '@/api/types';
 import './styles.css';
@@ -12,6 +13,7 @@ export class Header {
   private userName: TextElement;
   private userContainer: Element;
   private mediator: Mediator = Mediator.getInstance();
+  private logoutButton!: Button;
 
   constructor() {
     this.userName = new TextElement({
@@ -25,6 +27,7 @@ export class Header {
 
     this.mediator.subscribe('WS:LOGOUT', () => {
       this.userContainer.hide();
+      this.logoutButton.hide();
     });
 
     this.mediator.subscribe('WS:LOGIN', (data) => {
@@ -34,6 +37,7 @@ export class Header {
       }
       this.updateUserName(message.payload.user.login);
       this.userContainer.show();
+      this.logoutButton.show();
     });
   }
 
@@ -61,13 +65,14 @@ export class Header {
       events: { click: this.handleInfoClick.bind(this) },
     });
 
-    const logoutButton = new Button({
+    this.logoutButton = new Button({
       text: 'Logout',
       className: 'header-button header-logout-button',
       events: { click: this.handleLogoutClick.bind(this) },
     });
+    this.logoutButton.hide();
 
-    buttonsContainer.append(infoButton, logoutButton);
+    buttonsContainer.append(infoButton, this.logoutButton);
     header.append(title, this.userContainer, buttonsContainer);
     const headerWrapper = new Element({ tag: 'div', className: 'header-wrapper' });
     headerWrapper.append(header);
@@ -75,7 +80,9 @@ export class Header {
   }
 
   private handleInfoClick() {
-    console.log('Info button clicked');
+    const infoText = 'Fun Chat app for communication etc. Enjoy!';
+    const modal = new Modal(infoText);
+    modal.show();
   }
 
   private handleLogoutClick() {

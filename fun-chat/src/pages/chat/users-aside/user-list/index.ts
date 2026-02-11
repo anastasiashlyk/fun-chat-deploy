@@ -1,10 +1,11 @@
 import { BaseComponent } from '@/core/base-component';
-import { UserItem } from '@/components/user-list/user-item';
+import { UserItem } from './user-item';
 import { type User } from '@/api/types';
 import { Mediator } from '@/core/mediator';
-import { checkActiveUsers } from '@/services/auth-service';
+import { checkActiveUsers, checkInactiveUsers } from '@/services/auth-service';
 import { type Message } from '@/api/types';
 import { getUser } from '@/services/storage-service';
+import { fetchMessageHistory, fetchUnreadMessageCount } from '@/api/communicate-functions';
 
 export class UserList extends BaseComponent<HTMLUListElement> {
   private mediator: Mediator = Mediator.getInstance();
@@ -15,14 +16,31 @@ export class UserList extends BaseComponent<HTMLUListElement> {
     this.element.addEventListener('click', this.handleEventDelegation.bind(this));
 
     this.mediator.subscribe('WS:LOGIN', () => {
-      this.users = checkActiveUsers();
+      checkActiveUsers();
+      checkInactiveUsers();
     });
+
     this.mediator.subscribe('WS:USER_ACTIVE', (data) => {
       const message = data as Message;
       if (!message || !message.payload) {
         return;
       }
-      this.users = message.payload.users || [];
+      const activeUsers = message.payload.users || [];
+
+      this.users = this.users.filter((u) => !u.isLogined);
+      this.users = [...this.users, ...activeUsers];
+      this.setUsers(this.users);
+    });
+
+    this.mediator.subscribe('WS:USER_INACTIVE', (data) => {
+      const message = data as Message;
+      if (!message || !message.payload) {
+        return;
+      }
+      const inactiveUsers = message.payload.users || [];
+
+      this.users = this.users.filter((u) => u.isLogined);
+      this.users = [...this.users, ...inactiveUsers];
       this.setUsers(this.users);
     });
 
@@ -32,12 +50,14 @@ export class UserList extends BaseComponent<HTMLUListElement> {
         return;
       }
       const currentUser = message.payload.user;
-      if (this.users.some((u) => u.login === currentUser.login)) {
-        this.activeUser(currentUser);
-        return;
+
+      const existingUserIndex = this.users.findIndex((u) => u.login === currentUser.login);
+      if (existingUserIndex === -1) {
+        this.users.push(currentUser);
+      } else {
+        this.users[existingUserIndex] = currentUser;
       }
-      this.users.push(currentUser);
-      this.addUser(currentUser);
+      this.setUsers(this.users);
     });
 
     this.mediator.subscribe('WS:USER_EXTERNAL_LOGOUT', (data) => {
@@ -45,7 +65,12 @@ export class UserList extends BaseComponent<HTMLUListElement> {
       if (!message || !message.payload || !message.payload.user) {
         return;
       }
-      this.inactiveUser(message.payload.user);
+      const currentUser = message.payload.user;
+      const existingUserIndex = this.users.findIndex((u) => u.login === currentUser.login);
+      if (existingUserIndex !== -1) {
+        this.users[existingUserIndex] = currentUser;
+      }
+      this.setUsers(this.users);
     });
   }
 
@@ -55,10 +80,18 @@ export class UserList extends BaseComponent<HTMLUListElement> {
     if (!currentUser) {
       return;
     }
-    for (const user of users) {
-      if (user.login !== currentUser.login) {
-        this.append(new UserItem(user.login, user.isLogined || false));
+
+    const otherUsers = users.filter((user) => user.login !== currentUser.login);
+
+    otherUsers.sort((a, b) => {
+      if (a.isLogined === b.isLogined) {
+        return a.login.localeCompare(b.login);
       }
+      return a.isLogined ? -1 : 1;
+    });
+
+    for (const user of otherUsers) {
+      this.append(new UserItem(user.login, user.isLogined || false));
     }
   }
 
@@ -85,7 +118,8 @@ export class UserList extends BaseComponent<HTMLUListElement> {
       if (username) {
         const status: boolean = target.classList.contains('active');
         this.mediator.notify('CHAT_PARTNER', { username, status });
-        console.log({ username, status });
+        fetchMessageHistory(username);
+        fetchUnreadMessageCount(username);
       }
     }
   }

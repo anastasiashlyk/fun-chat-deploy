@@ -1,6 +1,7 @@
 import { Element } from '@/components/element';
 import { TextElement } from '@/components/text-element';
 import { Mediator } from '@/core/mediator';
+import { type Message } from '@/api/types';
 
 export class DialogHeader {
   private html: Element;
@@ -22,6 +23,18 @@ export class DialogHeader {
     this.mediator.subscribe('CHAT_PARTNER', (data) => {
       const { username, status } = data as { username: string; status: boolean };
       this.updateHeader(username, status);
+    });
+
+    this.mediator.subscribe('WS:USER_EXTERNAL_LOGOUT', (data) => {
+      const response = data as Message;
+
+      if (!response.payload?.user) {
+        return;
+      }
+
+      if (response.payload.user.login === this.userName.getText()) {
+        this.updateHeader(response.payload.user.login, response.payload.user.isLogined ?? false);
+      }
     });
   }
 

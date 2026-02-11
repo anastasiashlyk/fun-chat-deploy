@@ -27,6 +27,7 @@ export class LoginPage {
     this.loginButton = new Button({
       text: 'Login',
       className: 'button2',
+      type: 'submit',
       events: { click: this.handlerLoginClick.bind(this) },
     });
     this.nameInput = new Input({
@@ -45,6 +46,13 @@ export class LoginPage {
     this.mediator.subscribe('WS:OPEN', this.authorize.bind(this));
     this.mediator.subscribe('WS:LOGIN', this.hide.bind(this));
     this.mediator.subscribe('WS:LOGOUT', this.show.bind(this));
+    this.mediator.subscribe('WS:ERROR', (data) => {
+      const message = data as { payload: { error: string } };
+      if (message.payload && message.payload.error) {
+        this.passwordError.setText(message.payload.error);
+        this.loginButton.setDisabled(true);
+      }
+    });
   }
 
   private authorize() {
@@ -54,7 +62,12 @@ export class LoginPage {
     const html = new Element({ tag: 'section', className: 'login-page' });
     const form = new Form({
       className: 'login-form',
-      events: {},
+      events: {
+        submit: (event: Event) => {
+          event.preventDefault();
+          this.handlerLoginClick();
+        },
+      },
     });
 
     const div1 = new Element({ className: 'item' });
@@ -86,6 +99,8 @@ export class LoginPage {
     validator: (value: string) => string,
     errorElement: TextElement
   ) {
+    this.passwordError.setText('');
+
     const data = (event.target as HTMLInputElement).value;
     if (data) {
       const validationResult = validator(data);
@@ -110,15 +125,12 @@ export class LoginPage {
   }
 
   private handlerLoginClick() {
-    console.log('Login clicked');
     const name: string = this.nameInput.getValue();
     const password: string = this.passwordInput.getValue();
     if (!name || !password) {
-      this.loginButton.setDisabled(true);
       return;
     }
     authorize({ login: name, password: password });
-    this.mediator.notify('WS:LOGIN', { login: name, password: password });
   }
 
   private hide() {
@@ -127,5 +139,9 @@ export class LoginPage {
 
   private show() {
     this.html.getElement().style.display = 'block';
+    this.nameInput.setValue('');
+    this.passwordInput.setValue('');
+    this.nameError.setText('');
+    this.passwordError.setText('');
   }
 }

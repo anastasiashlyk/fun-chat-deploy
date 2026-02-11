@@ -10,6 +10,7 @@
   color: rgba(0, 0, 0, 0.565);
   overflow-y: auto;
   gap: 10px;
+  position: relative;
 }
 
 .dialog-content::after {
@@ -26,7 +27,27 @@
 .message-container {
   display: flex;
   width: 100%;
+}
+
+.left {
+  justify-content: flex-start;
+}
+
+.left > .message > .msg-item:last-child {
+  justify-content: flex-start;
+}
+
+.right {
   justify-content: flex-end;
+}
+
+.right > .message > .msg-item:first-child {
+  justify-content: flex-end;
+  padding-right: 10%;
+}
+
+.right > .message > .msg-item:first-child > :first-child {
+  display: none;
 }
 
 .message {
@@ -59,4 +80,49 @@
   padding: 10px;
   background-color: white;
   border-radius: 3px;
+}
+
+.msg-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.new-msg-line {
+  font-size: 10px;
+  position: relative; /* Changed from absolute */
+  color: red;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0; /* Added margin for spacing */
+  flex-shrink: 0; /* Prevent shrinking in flex container */
+}
+
+.new-msg-line:before {
+  display: block;
+  position: absolute;
+  top: 50%;
+  content: '';
+  height: 1px;
+  width: 38%;
+  margin: auto 0;
+  background-color: red;
+  left: 0; /* Ensure left alignment */
+}
+
+.new-msg-line:after {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  content: '';
+  height: 1px;
+  width: 38%;
+  margin: auto 0;
+  background-color: red;
 }

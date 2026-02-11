@@ -81,4 +81,8 @@ export abstract class BaseComponent<T extends HTMLElement = HTMLElement> {
   hasClass(className: string): boolean {
     return this.element.classList.contains(className);
   }
+
+  destroyChildren(): void {
+    for (const child of this.children) child.destroy();
+  }
 }

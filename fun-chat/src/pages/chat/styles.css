@@ -33,8 +33,23 @@
   padding: 10px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
+  position: relative;
 }
 
+.unread-count {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .user-item::before {
   display: inline-block;
   content: '';

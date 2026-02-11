@@ -34,20 +34,6 @@ export function authorize(user?: User) {
   });
 }
 
-// export function checkSession() {
-//   const storedUser = sessionStorage.getItem('user');
-//   console.log(storedUser);
-//   if (storedUser) {
-//     console.log('User already logged in from session');
-//     mediator.notify('WS:LOGIN', {
-//       id: undefined,
-//       type: 'USER_LOGIN',
-//       payload: { user: { ...JSON.parse(storedUser), isLogined: true } },
-//     });
-//     return;
-//   }
-// }
-
 export function logout() {
   const storedUser = sessionStorage.getItem('user');
   if (!storedUser) {
@@ -74,6 +60,23 @@ export function checkActiveUsers(): User[] {
   });
   let users: User[] = [];
   mediator.subscribe('WS:USER_ACTIVE', (parameter) => {
+    const data = parameter as Message;
+    if (!data.payload) {
+      return;
+    }
+    users = data.payload.users || [];
+  });
+  return users;
+}
+
+export function checkInactiveUsers(): User[] {
+  WebSocketService.getInstance().send({
+    id: 'user_inactive',
+    type: 'USER_INACTIVE',
+    payload: null,
+  });
+  let users: User[] = [];
+  mediator.subscribe('WS:USER_INACTIVE', (parameter) => {
     const data = parameter as Message;
     if (!data.payload) {
       return;

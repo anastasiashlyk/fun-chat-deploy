@@ -1,5 +1,5 @@
 import { BaseComponent } from '@/core/base-component';
-import { UserList } from '@/components/user-list';
+import { UserList } from './user-list';
 import { Input } from '@/components/input';
 
 export class UsersAside extends BaseComponent<HTMLElement> {

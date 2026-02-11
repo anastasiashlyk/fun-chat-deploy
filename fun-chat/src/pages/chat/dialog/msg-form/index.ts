@@ -2,7 +2,8 @@ import { Form } from '@/components/form';
 import { Input } from '@/components/input';
 import { Button } from '@/components/button';
 import { Mediator } from '@/core/mediator';
-import { sendMessage } from '@/api/communicate-functions';
+import { sendMessageToUser } from '@/api/communicate-functions';
+import { getUser } from '@/services/storage-service';
 
 export class DialogForm {
   private html: Form;
@@ -22,15 +23,25 @@ export class DialogForm {
       className: 'send-button button2',
       events: { click: this.handlerSendBtn.bind(this) },
     });
+    this.sendButton.setDisabled(true);
     this.html = this.createView();
     this.mediator.subscribe('CHAT_PARTNER', (data) => {
       const { username } = data as { username: string };
       this.currentChatPartner = username;
+      this.sendButton.setDisabled(false);
     });
   }
 
   private createView(): Form {
-    const messageForm = new Form({ className: 'msg-form' });
+    const messageForm = new Form({
+      className: 'msg-form',
+      events: {
+        submit: (event: Event) => {
+          event.preventDefault();
+          this.handlerSendBtn();
+        },
+      },
+    });
     messageForm.append(this.input, this.sendButton);
     return messageForm;
   }
@@ -42,9 +53,14 @@ export class DialogForm {
   private handlerSendBtn() {
     const text = this.input.getValue();
     const to = this.currentChatPartner;
+
     if (text && to) {
-      sendMessage(to, text);
+      sendMessageToUser(getUser()?.login || '', to, text);
       this.input.setValue('');
     }
+  }
+
+  getCurrentChatPartner(): string | null {
+    return this.currentChatPartner;
   }
 }

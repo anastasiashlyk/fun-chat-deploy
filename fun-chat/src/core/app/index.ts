@@ -3,6 +3,7 @@ import { WebSocketService } from '@/api/web-socket';
 import { Mediator } from '@/core/mediator';
 import { Layout } from '@/pages/layout';
 import { Chat } from '@/pages/chat';
+import { WS_URL } from '@/constants';
 
 export class App {
   private webSocketService: WebSocketService;
@@ -12,12 +13,9 @@ export class App {
     this.mediator = Mediator.getInstance();
     this.webSocketService = WebSocketService.getInstance();
 
-    // Subscribe to WebSocket events BEFORE connecting
-    this.mediator.subscribe('WS:OPEN', () => {
-      // alert('CONECTION');
-    });
+    this.mediator.subscribe('WS:OPEN', () => {});
 
-    this.webSocketService.connect('ws://localhost:4000');
+    this.webSocketService.connect(WS_URL);
   }
 
   public init() {

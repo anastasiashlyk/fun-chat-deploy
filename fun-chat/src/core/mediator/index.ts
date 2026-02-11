@@ -11,10 +11,8 @@ export class Mediator {
 
   subscribe(event: AppEvents, callback: ListenerFunction): void {
     if (!this.listeners.has(event)) {
-      const listFunction: Array<ListenerFunction> = [callback];
-      this.listeners.set(event, listFunction);
+      this.listeners.set(event, []);
     }
-
     const listeners = this.listeners.get(event);
     listeners?.push(callback);
   }
@@ -27,5 +25,15 @@ export class Mediator {
       return true;
     }
     return false;
+  }
+
+  unsubscribe(event: AppEvents, callback: ListenerFunction): void {
+    const listeners = this.listeners.get(event);
+    if (listeners) {
+      this.listeners.set(
+        event,
+        listeners.filter((listener) => listener !== callback)
+      );
+    }
   }
 }

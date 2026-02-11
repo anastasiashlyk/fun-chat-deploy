@@ -12,17 +12,34 @@ export class Footer {
 
   private createView(): Element {
     const footer = new Element({ tag: 'footer', className: 'chat-footer' });
-    const div = new Element({ tag: 'div' });
-    const img = new Image({
+    const div = new Element({ tag: 'div', className: 'footer-logo-container' });
+    const img = new Link({
+      href: 'https://rs.school/courses/javascript',
+      text: '',
+      className: 'footer-logo-link',
+    });
+    const logoImg = new Image({
       src: './public/logo.png',
       alt: 'Logo',
       className: 'img',
       width: 30,
       height: 30,
     });
-    div.append(img);
+    img.append(logoImg);
 
-    const link = new Link({ text: '@anastasiashlyk', href: 'https://github.com/anastasiashlyk' });
+    const rssSpan = new TextElement({
+      tag: 'span',
+      text: 'RSSchool',
+      className: 'footer-rss-text',
+    });
+
+    div.append(img, rssSpan);
+
+    const link = new Link({
+      text: '@anastasiashlyk',
+      href: 'https://github.com/anastasiashlyk',
+      className: 'footer-github-link',
+    });
 
     const span = new TextElement({ text: '2026' });
 
