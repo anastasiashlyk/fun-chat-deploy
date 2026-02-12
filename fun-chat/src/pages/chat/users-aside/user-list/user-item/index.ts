@@ -6,7 +6,6 @@ import { fetchUnreadMessageCount } from '@/api/communicate-functions';
 
 export class UserItem extends BaseComponent<HTMLLIElement> {
   private login: string;
-  private isLogined: boolean;
   private unreadMsg: TextElement = new TextElement({ text: '0', className: 'unread-msg' });
   private unreadCount: number = 0;
   private mediator: Mediator = Mediator.getInstance();
@@ -16,7 +15,6 @@ export class UserItem extends BaseComponent<HTMLLIElement> {
     super('li', { className: 'user-item' });
     this.element.textContent = username;
     this.login = username;
-    this.isLogined = isLogined;
     this.currentChatPartner = currentPartner;
 
     this.append(this.unreadMsg);
