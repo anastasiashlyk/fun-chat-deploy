@@ -10,6 +10,7 @@ import { fetchMessageHistory, fetchUnreadMessageCount } from '@/api/communicate-
 export class UserList extends BaseComponent<HTMLUListElement> {
   private mediator: Mediator = Mediator.getInstance();
   public users: User[] = [];
+  private currentChatPartner: string = '';
 
   constructor() {
     super('ul', { className: 'user-list' });
@@ -72,6 +73,11 @@ export class UserList extends BaseComponent<HTMLUListElement> {
       }
       this.setUsers(this.users);
     });
+
+    this.mediator.subscribe('CHAT_PARTNER', (data) => {
+      const { username } = data as { username: string };
+      this.currentChatPartner = username;
+    });
   }
 
   public setUsers(users: User[]) {
@@ -91,12 +97,12 @@ export class UserList extends BaseComponent<HTMLUListElement> {
     });
 
     for (const user of otherUsers) {
-      this.append(new UserItem(user.login, user.isLogined || false));
+      this.append(new UserItem(user.login, user.isLogined || false, this.currentChatPartner));
     }
   }
 
   public addUser(user: User) {
-    this.append(new UserItem(user.login, user.isLogined || false));
+    this.append(new UserItem(user.login, user.isLogined || false, this.currentChatPartner));
   }
 
   public removeUser(user: User) {
@@ -112,11 +118,14 @@ export class UserList extends BaseComponent<HTMLUListElement> {
   }
 
   private handleEventDelegation(event: Event) {
-    const target = event.target as HTMLLIElement;
-    if (target.tagName === 'LI') {
-      const username = target.dataset['user'];
+    const target = event.target as HTMLElement;
+    const userItem = target.closest('.user-item') as HTMLLIElement;
+
+    if (userItem) {
+      const username = userItem.dataset['user'];
       if (username) {
-        const status: boolean = target.classList.contains('active');
+        const status: boolean = userItem.classList.contains('active');
+        this.currentChatPartner = username;
         this.mediator.notify('CHAT_PARTNER', { username, status });
         fetchMessageHistory(username);
         fetchUnreadMessageCount(username);

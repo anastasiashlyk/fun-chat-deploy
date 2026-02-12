@@ -38,7 +38,7 @@ export function fetchMessageHistory(from: string) {
 export function fetchUnreadMessageCount(from: string) {
   const webSocketService = WebSocketService.getInstance();
   const request: Message = {
-    id: `fetchUnreadMsgCount_${from}`,
+    id: from,
     type: 'MSG_COUNT_NOT_READED_FROM_USER',
     payload: {
       user: {
