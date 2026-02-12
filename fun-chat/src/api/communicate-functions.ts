@@ -62,3 +62,32 @@ export function markMessageAsRead(id: string) {
   };
   webSocketService.send(request);
 }
+
+export function deleteMessageRequest(id: string) {
+  const webSocketService = WebSocketService.getInstance();
+  const request: Message = {
+    id: id,
+    type: 'MSG_DELETE',
+    payload: {
+      message: {
+        id: id,
+      },
+    },
+  };
+  webSocketService.send(request);
+}
+
+export function editMessageRequest(id: string, text: string) {
+  const webSocketService = WebSocketService.getInstance();
+  const request: Message = {
+    id: id,
+    type: 'MSG_EDIT',
+    payload: {
+      message: {
+        id: id,
+        text: text,
+      },
+    },
+  };
+  webSocketService.send(request);
+}

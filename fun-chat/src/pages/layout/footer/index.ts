@@ -19,7 +19,7 @@ export class Footer {
       className: 'footer-logo-link',
     });
     const logoImg = new Image({
-      src: './public/logo.png',
+      src: '/logo.png',
       alt: 'Logo',
       className: 'img',
       width: 30,

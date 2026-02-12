@@ -30,4 +30,10 @@ export class Button extends BaseComponent<HTMLButtonElement> {
       this.element.removeAttribute('disabled');
     }
   }
+  setText(text: string): void {
+    this.element.textContent = text;
+  }
+  getText(): string {
+    return this.element.textContent || '';
+  }
 }

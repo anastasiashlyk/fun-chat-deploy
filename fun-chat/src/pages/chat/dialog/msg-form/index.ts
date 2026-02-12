@@ -4,6 +4,7 @@ import { Button } from '@/components/button';
 import { Mediator } from '@/core/mediator';
 import { sendMessageToUser } from '@/api/communicate-functions';
 import { getUser } from '@/services/storage-service';
+import { editMessageRequest } from '@/api/communicate-functions';
 
 export class DialogForm {
   private html: Form;
@@ -11,6 +12,7 @@ export class DialogForm {
   private sendButton: Button;
   private currentChatPartner: string | null = null;
   private mediator: Mediator = Mediator.getInstance();
+  private editingMessageId: string | null = null;
 
   constructor() {
     this.input = new Input({
@@ -29,6 +31,14 @@ export class DialogForm {
       const { username } = data as { username: string };
       this.currentChatPartner = username;
       this.sendButton.setDisabled(false);
+    });
+
+    this.mediator.subscribe('EDIT-REQUEST', (data) => {
+      const { id, text } = data as { id: string; text: string };
+      console.log(id, text);
+      this.input.setValue(text);
+      this.sendButton.setText('Save');
+      this.editingMessageId = id;
     });
   }
 
@@ -51,6 +61,13 @@ export class DialogForm {
   }
 
   private handlerSendBtn() {
+    if (this.sendButton.getText() === 'Save') {
+      this.sendButton.setText('Send');
+      editMessageRequest(this.editingMessageId || '', this.input.getValue());
+      this.input.setValue('');
+      this.editingMessageId = null;
+      return;
+    }
     const text = this.input.getValue();
     const to = this.currentChatPartner;
 

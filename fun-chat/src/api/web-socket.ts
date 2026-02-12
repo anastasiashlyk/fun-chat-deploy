@@ -1,9 +1,15 @@
 import { Mediator } from '@/core/mediator';
 import { type Message } from './types';
+import { WS_URL } from '@/constants';
+import { Modal } from '@/components/modal';
 export class WebSocketService {
   private static instance: WebSocketService;
   private socket!: WebSocket;
   private mediator = Mediator.getInstance();
+  private reconnectAttempts = 0;
+  private modal: Modal = new Modal('Disconnected from server');
+  private modalVisible = false;
+  private maxReconnectAttempts = 5;
 
   private constructor() {}
 
@@ -22,8 +28,19 @@ export class WebSocketService {
 
     this.socket.addEventListener('open', () => {
       this.mediator.notify('WS:OPEN');
+      if (this.modalVisible) {
+        this.modalVisible = false;
+        this.modal.hide();
+        this.modal = new Modal('Connected to server');
+        this.modalVisible = true;
+        this.modal.show();
+      }
     });
 
+    this.listenMessages();
+  }
+
+  private listenMessages() {
     this.socket.addEventListener('message', (event) => {
       const data: Message = JSON.parse(event.data);
 
@@ -95,6 +112,27 @@ export class WebSocketService {
         }
       }
     });
+    this.socket.addEventListener('close', () => {
+      console.log('Disconnected from server');
+
+      this.mediator.notify('WS:DISCONNECTED');
+      if (this.modalVisible === false) {
+        this.modal.show();
+        this.modalVisible = true;
+      }
+
+      this.reconnect();
+    });
+  }
+  private reconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) return;
+
+    this.reconnectAttempts++;
+
+    setTimeout(() => {
+      console.log('Reconnecting...');
+      this.connect(WS_URL);
+    }, 2000);
   }
   send(data: Message) {
     this.socket.send(JSON.stringify(data));

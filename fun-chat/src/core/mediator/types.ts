@@ -19,4 +19,6 @@ export type AppEvents =
   | 'WS:MSG_DELIVER'
   | 'WS:MSG_READ'
   | 'WS:MSG_DELETE'
-  | 'WS:MSG_EDIT';
+  | 'WS:MSG_EDIT'
+  | 'WS:DISCONNECTED'
+  | 'EDIT-REQUEST';

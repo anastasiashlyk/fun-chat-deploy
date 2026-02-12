@@ -230,12 +230,13 @@ export class MessagesBox {
     if (!message) {
       return;
     }
-    const newMessage = new MessageElement(message);
+    const newMessage = new MessageElement(message, id);
     newMessage.getHtml().getElement().id = `message-${id}`;
     markMessageAsRead(id);
     if (message.from === currentChatPartner) {
       newMessage.getHtml().addClass('left');
       newMessage.hideStatus();
+      newMessage.hideMenuBtn();
     } else if (message.from === getUser()?.login) {
       newMessage.getHtml().addClass('right');
     }

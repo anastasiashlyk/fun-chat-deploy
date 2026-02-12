@@ -133,15 +133,10 @@ export class LoginPage {
     authorize({ login: name, password: password });
   }
 
-  private hide() {
+  public hide() {
     this.html.getElement().style.display = 'none';
   }
-
-  private show() {
+  public show() {
     this.html.getElement().style.display = 'block';
-    this.nameInput.setValue('');
-    this.passwordInput.setValue('');
-    this.nameError.setText('');
-    this.passwordError.setText('');
   }
 }

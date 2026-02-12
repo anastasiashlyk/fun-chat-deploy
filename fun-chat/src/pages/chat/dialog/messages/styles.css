@@ -35,6 +35,8 @@
 
 .left > .message > .msg-item:last-child {
   justify-content: flex-start;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .right {
@@ -51,6 +53,7 @@
 }
 
 .message {
+  position: relative;
   padding: 5px;
   border-radius: 10px;
   width: 55%;
@@ -74,6 +77,7 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .message-text {
@@ -95,12 +99,12 @@
 
 .new-msg-line {
   font-size: 10px;
-  position: relative; /* Changed from absolute */
+  position: relative;
   color: red;
   width: 100%;
   text-align: center;
-  margin: 10px 0; /* Added margin for spacing */
-  flex-shrink: 0; /* Prevent shrinking in flex container */
+  margin: 10px 0;
+  flex-shrink: 0;
 }
 
 .new-msg-line:before {
@@ -112,7 +116,7 @@
   width: 38%;
   margin: auto 0;
   background-color: red;
-  left: 0; /* Ensure left alignment */
+  left: 0;
 }
 
 .new-msg-line:after {
@@ -125,4 +129,48 @@
   width: 38%;
   margin: auto 0;
   background-color: red;
+}
+
+.message-menu-btn {
+  position: absolute;
+  color: rgba(0, 0, 0, 0.565);
+  background-color: transparent;
+  align-self: flex-end;
+  width: 12px;
+  height: 12px;
+  right: 5px;
+  top: 5px;
+}
+.message-menu-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.message-menu-btn:hover {
+  cursor: pointer;
+}
+
+.message-menu-btn:hover > .message-menu-icon {
+  filter: invert(100%);
+}
+
+.message-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(210, 195, 255);
+  border-radius: 5px;
+  padding: 5px;
+  gap: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.message-menu-edit,
+.message-menu-delete {
+  cursor: pointer;
+}
+
+.message-menu-edit:hover,
+.message-menu-delete:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
