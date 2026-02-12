@@ -102,7 +102,7 @@ export class MessageElement {
       const message: Message = data as Message;
       if (message.payload?.message?.id === this.id) {
         this.text.setText(message.payload?.message?.text || '');
-        this.status.setText(message.payload?.message?.status?.isEdited ? 'Edited' : 'Not edited');
+        this.isEdited.setText(message.payload?.message?.status?.isEdited ? 'Edited' : ' ');
       }
     });
   }

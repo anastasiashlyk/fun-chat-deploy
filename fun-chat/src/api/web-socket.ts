@@ -108,6 +108,7 @@ export class WebSocketService {
         }
         case 'MSG_EDIT': {
           this.mediator.notify('WS:MSG_EDIT', data);
+          console.log(data);
           break;
         }
       }
